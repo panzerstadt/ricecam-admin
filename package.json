@@ -3,12 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
+    "dayjs": "^1.8.14",
+    "file-saver": "^2.0.1",
+    "firebase": "^6.0.1",
+    "jszip": "^3.2.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
+    "dev": "gsutil cors set cors.json gs://operation-verde-ricecam.appspot.com && yarn start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

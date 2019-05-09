@@ -1,0 +1,11 @@
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.listTable {
+  margin: 1rem auto;
+  text-align: left;
+}

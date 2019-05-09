@@ -1,24 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <ol>
+          <li>DONE pull state from database</li>
+          <li>DONE see current recorder state</li>
+          <li>DONE view all videos on a certain day (and their predictions)</li>
+          <li>
+            LATER allow admin to mark the ones to keep and delete the rest
+          </li>
+          <li>allow download in bulk</li>
+          <br />
+          <li>larger video (maybe 1080p square</li>
+        </ol>
       </header>
+      <Dashboard />
     </div>
   );
 }
