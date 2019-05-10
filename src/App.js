@@ -15,9 +15,8 @@ function App() {
           <li>
             LATER allow admin to mark the ones to keep and delete the rest
           </li>
-          <li>allow download in bulk</li>
-          <br />
-          <li>larger video (maybe 1080p square</li>
+          <li>DONE allow download in bulk</li>
+          <li>DONE larger video (maybe 1080p square)</li>
         </ol>
       </header>
       <Dashboard />

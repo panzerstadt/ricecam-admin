@@ -42,23 +42,30 @@ export const grabListOfVideoPaths = async day => {
     .then(async querySnapshot => {
       let promises = [];
       let filenames = [];
+      console.log(querySnapshot);
       await querySnapshot.forEach(async doc => {
         // here are your DB video filepaths
         const url = doc.data().url;
         filenames.push(url.split("/").slice(-1));
-        //console.log(url);
+        console.log(url);
 
         promises.push(
           firebase
             .storage()
             .ref(url)
             .getDownloadURL() // this is an async function
+            .catch(e => {
+              console.log(e.message);
+              if (e.code === "storage/object-not-found")
+                return "video not found";
+              else return false;
+            })
         );
       });
 
       const srcs = await Promise.all(promises);
       return srcs.map((v, i) => ({
-        name: filenames[i],
+        name: filenames[i][0],
         src: v
       }));
     });
