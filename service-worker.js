@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.0/workbox-sw.js");
 
 importScripts(
-  "/ricecam-admin/precache-manifest.d43d3383f0b4e2aeef883b97eefab5a2.js"
+  "/ricecam-admin/precache-manifest.99ab125fc1de7c03b3e06277c82a72f9.js"
 );
 
 self.addEventListener('message', (event) => {
