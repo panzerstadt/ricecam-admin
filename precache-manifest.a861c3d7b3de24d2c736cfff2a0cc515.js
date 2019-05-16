@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "6119e898baa6f2d3ee657ccda9409fd2",
+    "revision": "f083c20e269a5413282c3f8161372856",
     "url": "/ricecam-admin/index.html"
   },
   {
-    "revision": "75efb9bf638f3f70ab78",
+    "revision": "51922e513449626cee33",
     "url": "/ricecam-admin/static/css/main.0ebf48d2.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/ricecam-admin/static/js/2.33c2d403.chunk.js"
   },
   {
-    "revision": "75efb9bf638f3f70ab78",
-    "url": "/ricecam-admin/static/js/main.ed6959ee.chunk.js"
+    "revision": "51922e513449626cee33",
+    "url": "/ricecam-admin/static/js/main.e93e2543.chunk.js"
   },
   {
     "revision": "0db71f717658a8c802e9",
