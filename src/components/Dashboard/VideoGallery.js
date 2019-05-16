@@ -157,11 +157,11 @@ const VideoList = ({ date = "2019-05-08" }) => {
         {vlist.map((v, i) => {
           if (!v.src || v.src === "video not found") return null;
           return (
-            <div key={v.name} style={{ margin: 5 }}>
+            <div key={v.name} style={{ margin: "10px auto" }}>
               {!showPreview ? (
                 <a href={v.src}>{v.name}</a>
               ) : (
-                <video height={200} controls playsInline>
+                <video height={400} controls autoPlay playsInline loop muted>
                   <source src={v.src} type="video/webm" />
                 </video>
               )}
