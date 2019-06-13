@@ -1,0 +1,42 @@
+.videoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-content: center;
+  align-content: center;
+  padding-bottom: 20px;
+}
+
+@media (max-width: 1300px) {
+  .videoGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .videoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.videoName {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  color: white;
+  background: black;
+  padding: 5px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.checkbox {
+  position: absolute;
+  right: 10px;
+  top: 15px;
+  transform: scale(1.5);
+}
+
+.checkboxSimple {
+  margin-left: 20px;
+  transform: scale(1.5);
+}

@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
-
-import VideoGallery from "./VideoGallery";
-import RecorderMonitor from "./RecorderMonitor";
+// timestamps
+import dayjs from "dayjs";
+import "dayjs/locale/ja";
 
 import styles from "./index.module.css";
 
+import VideoGallery from "./VideoGallery";
+import RecorderMonitor from "./RecorderMonitor";
+dayjs.locale("ja");
+
 const Dashboard = () => {
-  const [date, setDate] = useState("2019-05-10");
-  const [query, setQuery] = useState("2019-05-10");
+  const today = dayjs().format("YYYY-MM-DD");
+  const [date, setDate] = useState(today);
+  const [query, setQuery] = useState(today);
 
   const handleUpdateVideoGallery = e => {
     setQuery(date);
@@ -19,6 +24,15 @@ const Dashboard = () => {
       <h1>ricecam admin</h1>
       <form onSubmit={handleUpdateVideoGallery}>
         <input
+          style={{
+            height: 18,
+            padding: 5,
+            marginRight: 10,
+            borderRadius: 5,
+            outline: "none",
+            border: "1px solid black",
+            boxShadow: "1px 2px 5px #08BDBD55"
+          }}
           onChange={e => setDate(e.target.value)}
           value={date}
           placeholder="2019-05-08"

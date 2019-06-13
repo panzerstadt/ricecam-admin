@@ -5,6 +5,8 @@ import axios from "axios";
 
 import { grabListOfVideoPaths } from "../Database";
 
+import styles from "./VideoGallery.module.css";
+
 const downloadMultiple = async (files, status) => {
   var zip = new JSZip();
   // zip.file("Hello.txt", "Hello World\n");
@@ -99,25 +101,68 @@ const VideoList = ({ date = "2019-05-08" }) => {
         }).length
       : 0;
 
+  // store a list of indices you want to delete. order doesn't matter
+  const [vlistChecked, setVlistChecked] = useState([]);
+  const [numSelected, setNumSelected] = useState();
+  useEffect(() => {
+    setVlistChecked(Array.from(vlist, () => false));
+  }, [vlist]);
+
+  useEffect(() => {
+    setNumSelected(vlistChecked.filter(v => v === true).length);
+  }, [vlistChecked]);
+
+  const handleCheckbox = (bool, i) => {
+    let newList = vlistChecked.slice(0);
+    newList[i] = bool;
+    setVlistChecked(newList);
+  };
+
   return (
     <>
-      <h4>
-        current list of videos on {date}:{" "}
-        <span
-          style={{
-            color:
-              videoCount === vlist.length && videoCount ? "black" : "orange"
-          }}
-        >
-          {videoCount} (storage) / {vlist.length} (db){" "}
-        </span>
-        <button onClick={() => downloadMultiple(vlist, handleStatus)}>
-          DOWNLOAD ALL
-        </button>
-        <button onClick={() => setShowPreview(!showPreview)}>
-          preview video
-        </button>
-      </h4>
+      <div style={{ textAlign: "left", margin: "0 30px" }}>
+        <br />
+
+        <h4 style={{ margin: "0 0 8px 0" }}>
+          current list of videos on {date}:{" "}
+          <span
+            style={{
+              color:
+                videoCount === vlist.length && videoCount ? "black" : "orange"
+            }}
+          >
+            {videoCount} (storage) / {vlist.length} (db){" "}
+          </span>
+        </h4>
+
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <button onClick={() => setShowPreview(!showPreview)}>
+            preview video
+          </button>
+
+          <div>
+            <button
+              style={{
+                color: numSelected === 0 ? "lightgray" : "black",
+                pointerEvents: numSelected === 0 ? "none" : "all"
+              }}
+              onClick={() =>
+                downloadMultiple(
+                  vlist.filter((v, i) => vlistChecked[i]),
+                  handleStatus
+                )
+              }
+            >
+              DOWNLOAD {numSelected}
+            </button>{" "}
+            <button onClick={() => downloadMultiple(vlist, handleStatus)}>
+              DOWNLOAD ALL
+            </button>
+          </div>
+        </div>
+        <br />
+      </div>
+
       {showPreview && (
         <h4 style={{ color: "red" }}>
           WARNING: video previews count towards download quota of 1GB/day
@@ -148,28 +193,84 @@ const VideoList = ({ date = "2019-05-08" }) => {
           </li>
         ))}
       </ul>
+
       <div
         style={{
+          textAlign: "left",
+          margin: "0 30px",
           display: "flex",
-          flexWrap: "wrap"
+          justifyContent: "space-between",
+          alignItems: "center"
         }}
       >
-        {vlist.map((v, i) => {
-          if (!v.src || v.src === "video not found") return null;
-          return (
-            <div key={v.name} style={{ margin: "10px auto" }}>
-              {!showPreview ? (
-                <a href={v.src}>{v.name}</a>
-              ) : (
-                <video height={400} controls autoPlay playsInline loop muted>
-                  <source src={v.src} type="video/webm" />
-                </video>
-              )}
-              <br />
-              <small>{v.name}</small>
-            </div>
-          );
-        })}
+        <h4>videos selected: {numSelected}</h4>
+        <div>
+          <button onClick={() => setVlistChecked(p => p.map(() => false))}>
+            select none
+          </button>{" "}
+          <button onClick={() => setVlistChecked(p => p.map(() => true))}>
+            select all
+          </button>
+        </div>
+      </div>
+
+      <div
+        style={{
+          border: "1px solid black",
+          borderRadius: 8,
+          minHeight: 50,
+          margin: "0 30px"
+        }}
+      >
+        <div className={styles.videoGrid}>
+          {vlist.map((v, i) => {
+            if (!v.src || v.src === "video not found") return null;
+            return (
+              <div
+                key={v.name}
+                style={{ margin: "20px 5px 0", position: "relative" }}
+              >
+                {!showPreview ? (
+                  <div style={{ position: "relative" }}>
+                    <a href={v.src}>{v.name}</a>
+                    <input
+                      type="checkbox"
+                      className={styles.checkboxSimple}
+                      checked={vlistChecked[i]}
+                      onChange={e => handleCheckbox(e.target.checked, i)}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      position: "relative",
+                      width: 400,
+                      margin: "0 auto"
+                    }}
+                  >
+                    <video
+                      height={400}
+                      controls
+                      autoPlay
+                      playsInline
+                      loop
+                      muted
+                    >
+                      <source src={v.src} type="video/webm" />
+                    </video>
+                    <small className={styles.videoName}>{v.name}</small>
+                    <input
+                      type="checkbox"
+                      className={styles.checkbox}
+                      checked={vlistChecked[i]}
+                      onChange={e => handleCheckbox(e.target.checked, i)}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </>
   );
