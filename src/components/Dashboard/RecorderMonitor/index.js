@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 
-import styles from "./RecorderMonitor.module.css";
+import styles from "./index.module.css";
 
-import { pullAppStateFromDB } from "../Database";
+import { pullAppStateFromDB } from "../../Database";
 
 const RecorderMonitor = () => {
   const [recorderState, setRecorderState] = useState({});

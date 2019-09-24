@@ -1,70 +1,14 @@
 import React, { useState, useEffect } from "react";
-import JSZip from "jszip";
-import FileSaver from "file-saver";
-import axios from "axios";
 
-import { grabListOfVideoPaths } from "../Database";
+import Timelapse from "../Timelapse";
+import Status from "../Status";
 
-import styles from "./VideoGallery.module.css";
+import { grabListOfVideoPaths } from "../../Database";
+import { downloadMultiple, download } from "../libs";
 
-const downloadMultiple = async (files, status) => {
-  var zip = new JSZip();
-  // zip.file("Hello.txt", "Hello World\n");
-  // var img = zip.folder("images");
-  // img.file("smile.gif", imgData, { base64: true });
+import styles from "./index.module.css";
 
-  const promises = [];
-
-  files.map(async (v, i) => {
-    status && status(`item no.${i + 1} - performing GET requests`);
-    promises.push(
-      axios({ method: "get", url: v.src, responseType: "blob" })
-        .then(response => {
-          status &&
-            status(`item no.${i + 1} - download complete. adding to zip file`);
-          let file = new Blob([response.data], { type: "video/mp4" });
-          zip.file(v.name, file);
-        })
-        .catch(e => {
-          status &&
-            status(`item no.${i + 1} - download error: ${JSON.stringify(e)}`);
-          console.log("axios error: ", e);
-          //throw new Error("download failed. check console.");
-        })
-    );
-  });
-
-  await Promise.all(promises);
-  status && status("all downloads complete. generating zip file.");
-
-  zip.generateAsync({ type: "blob" }).then(function(content) {
-    status && status("zip complete. saving!");
-    // see FileSaver.js
-    FileSaver.saveAs(content, "videos.zip");
-  });
-};
-
-export const download = (
-  content,
-  fileName = "text.mp4",
-  contentType = "video/webm"
-) => {
-  let a = document.createElement("a");
-  let file = new Blob([content], { type: contentType });
-  a.href = URL.createObjectURL(file);
-  a.download = fileName;
-  a.click();
-};
-
-const downloadOneVideo = video => {
-  axios({ method: "get", url: video.src, responseType: "blob" }).then(
-    response => {
-      download(response.data);
-    }
-  );
-};
-
-const VideoList = ({ date = "2019-05-08" }) => {
+const VideoList = ({ date = "2019-07-08" }) => {
   // toggle preview
   const [showPreview, setShowPreview] = useState(false);
   // status reporting
@@ -72,6 +16,8 @@ const VideoList = ({ date = "2019-05-08" }) => {
   const handleStatus = statusText => {
     setStatus(p => [...p.slice(-5), statusText]);
   };
+  // create timelapse
+  const [createTimelapse, setCreateTimelapse] = useState(false);
 
   // list videos from db
   const [vlist, setVlist] = useState([]);
@@ -118,6 +64,14 @@ const VideoList = ({ date = "2019-05-08" }) => {
     setVlistChecked(newList);
   };
 
+  const [subset, setSubset] = useState([]);
+  useEffect(() => {
+    if (vlist.length > 0 && numSelected > 0) {
+      console.log("setting subset");
+      setSubset(vlist.filter((v, i) => vlistChecked[i]));
+    }
+  }, [vlist, vlistChecked, numSelected]);
+
   return (
     <>
       <div style={{ textAlign: "left", margin: "0 30px" }}>
@@ -136,14 +90,22 @@ const VideoList = ({ date = "2019-05-08" }) => {
         </h4>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <button onClick={() => setShowPreview(!showPreview)}>
-            preview video
-          </button>
+          <div>
+            <button onClick={() => setShowPreview(!showPreview)}>
+              preview video
+            </button>{" "}
+            <button
+              onClick={() => setCreateTimelapse(!createTimelapse)}
+              style={{ backgroundColor: createTimelapse ? "red" : "" }}
+            >
+              preview timelapse
+            </button>
+          </div>
 
           <div>
             <button
               style={{
-                color: numSelected === 0 ? "lightgray" : "black",
+                color: numSelected === 0 ? "lightgray" : "",
                 pointerEvents: numSelected === 0 ? "none" : "all"
               }}
               onClick={() =>
@@ -163,36 +125,16 @@ const VideoList = ({ date = "2019-05-08" }) => {
         <br />
       </div>
 
-      {showPreview && (
+      <Timelapse data={subset} status={handleStatus} run={createTimelapse} />
+      <br />
+      <Status statuses={statuses} date={date} />
+
+      {(showPreview || createTimelapse) && (
         <h4 style={{ color: "red" }}>
-          WARNING: video previews count towards download quota of 1GB/day
+          WARNING: video and timelapse previews count towards download quota of
+          1GB/day
         </h4>
       )}
-      <ul
-        style={{
-          height: 130,
-          overflowY: "auto",
-          borderRadius: 8,
-          backgroundColor: "black",
-          padding: 10,
-          color: "white",
-          margin: "0 30px",
-          textAlign: "left"
-        }}
-      >
-        {statuses.map((v, i) => (
-          <li
-            key={`${date}-${i}`}
-            style={{
-              fontSize: 11,
-              padding: "2px 0",
-              borderBottom: "1px solid rgba(143, 143, 143, 0.2)"
-            }}
-          >
-            {v}
-          </li>
-        ))}
-      </ul>
 
       <div
         style={{
@@ -234,9 +176,10 @@ const VideoList = ({ date = "2019-05-08" }) => {
                   <div style={{ position: "relative" }}>
                     <a href={v.src}>{v.name}</a>
                     <input
+                      name="isSelected"
                       type="checkbox"
                       className={styles.checkboxSimple}
-                      checked={vlistChecked[i]}
+                      checked={vlistChecked[i] || false}
                       onChange={e => handleCheckbox(e.target.checked, i)}
                     />
                   </div>
@@ -260,9 +203,10 @@ const VideoList = ({ date = "2019-05-08" }) => {
                     </video>
                     <small className={styles.videoName}>{v.name}</small>
                     <input
+                      name="isSelected"
                       type="checkbox"
                       className={styles.checkbox}
-                      checked={vlistChecked[i]}
+                      checked={vlistChecked[i] || false}
                       onChange={e => handleCheckbox(e.target.checked, i)}
                     />
                   </div>

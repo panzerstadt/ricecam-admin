@@ -10,7 +10,7 @@ import RecorderMonitor from "./RecorderMonitor";
 dayjs.locale("ja");
 
 const Dashboard = () => {
-  const today = dayjs().format("YYYY-MM-DD");
+  const today = dayjs("2019-08-20").format("YYYY-MM-DD");
   const [date, setDate] = useState(today);
   const [query, setQuery] = useState(today);
 
@@ -21,7 +21,7 @@ const Dashboard = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      <h1>ricecam admin</h1>
+      <h1>ricecam viewer</h1>
       <form onSubmit={handleUpdateVideoGallery}>
         <input
           style={{

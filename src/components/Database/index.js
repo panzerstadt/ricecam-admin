@@ -42,12 +42,12 @@ export const grabListOfVideoPaths = async day => {
     .then(async querySnapshot => {
       let promises = [];
       let filenames = [];
-      console.log(querySnapshot);
+      //console.log(querySnapshot);
       await querySnapshot.forEach(async doc => {
         // here are your DB video filepaths
         const url = doc.data().url;
         filenames.push(url.split("/").slice(-1));
-        console.log(url);
+        //console.log(url);
 
         promises.push(
           firebase
